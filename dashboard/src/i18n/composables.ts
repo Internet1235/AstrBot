@@ -3,13 +3,13 @@ import { localeLoaders } from './translations';
 import type { Locale } from './types';
 
 // 全局状态
-const currentLocale = ref<Locale>('zh-CN');
+const currentLocale = ref<Locale>('en-US');
 const translations = ref<Record<string, any>>({});
 
 /**
  * 初始化i18n系统
  */
-export async function initI18n(locale: Locale = 'zh-CN') {
+export async function initI18n(locale: Locale = 'en-US') {
   currentLocale.value = locale;
   if (typeof document !== 'undefined') {
     document.documentElement.lang = locale;
@@ -24,14 +24,14 @@ export async function initI18n(locale: Locale = 'zh-CN') {
  */
 async function loadTranslations(locale: Locale) {
   try {
-    const loader = localeLoaders[locale] ?? localeLoaders['zh-CN'];
+    const loader = localeLoaders[locale] ?? localeLoaders['en-US'];
     translations.value = await loader();
   } catch (error) {
     console.error(`Failed to load translations for ${locale}:`, error);
-    // 回退到中文
-    if (locale !== 'zh-CN') {
-      console.log('Falling back to zh-CN');
-      translations.value = await localeLoaders['zh-CN']();
+    // 回退到英文
+    if (locale !== 'en-US') {
+      console.log('Falling back to en-US');
+      translations.value = await localeLoaders['en-US']();
     }
   }
 }
@@ -225,7 +225,7 @@ export async function setupI18n() {
       .map(language => supportedLocales.find(locale =>
         locale.startsWith(`${language.split('-')[0].toLowerCase()}-`)
       ))
-      .find(Boolean) ?? 'zh-CN';
+      .find(Boolean) ?? 'en-US';
 
   await initI18n(initialLocale);
 }
