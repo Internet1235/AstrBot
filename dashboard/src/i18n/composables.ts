@@ -215,13 +215,17 @@ function deepMerge(target: Record<string, any>, source: Record<string, any>) {
   }
 }
 
-// 初始化函数（在应用启动时调用）
+// Prefer a saved choice; otherwise resolve the browser's ordered language preferences.
 export async function setupI18n() {
-  // 从localStorage获取保存的语言设置
-  const savedLocale = localStorage.getItem('astrbot-locale') as Locale;
-  const initialLocale = savedLocale && ['zh-CN', 'en-US', 'ru-RU', 'ja-JP'].includes(savedLocale)
+  const supportedLocales = Object.keys(localeLoaders) as Locale[];
+  const savedLocale = localStorage.getItem('astrbot-locale') as Locale | null;
+  const initialLocale = savedLocale && supportedLocales.includes(savedLocale)
     ? savedLocale
-    : 'zh-CN';
+    : (navigator.languages?.length ? navigator.languages : [navigator.language])
+      .map(language => supportedLocales.find(locale =>
+        locale.startsWith(`${language.split('-')[0].toLowerCase()}-`)
+      ))
+      .find(Boolean) ?? 'zh-CN';
 
   await initI18n(initialLocale);
-} 
+}

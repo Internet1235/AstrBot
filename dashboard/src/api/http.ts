@@ -18,7 +18,9 @@ function getToken(): string | null {
 }
 
 function getLocale(): string | null {
-  return localStorage.getItem('astrbot-locale');
+  // Automatic language detection updates the document without saving a preference.
+  return (typeof document !== 'undefined' && document.documentElement.lang)
+    || localStorage.getItem('astrbot-locale');
 }
 
 function setAxiosHeader(
