@@ -2,13 +2,12 @@ name: AstrBot Dashboard CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "feat/language" ]
   pull_request:
     branches: [ "master" ]
 
 jobs:
   build:
-    if: github.repository == 'AstrBotDevs/AstrBot'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -55,11 +54,10 @@ jobs:
 
       - name: Create GitHub Release
         if: github.event_name == 'push'
-        uses: ncipollo/release-action@v1.21.0
+        uses: softprops/action-gh-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag: release-${{ github.sha }}
-          owner: AstrBotDevs
-          repo: astrbot-release-harbour
+          tag_name: release-${{ github.sha }}
           body: "Automated release from commit ${{ github.sha }}"
-          token: ${{ secrets.ASTRBOT_HARBOUR_TOKEN }}
-          artifacts: "dashboard/dist.zip"
+          files: "dashboard/dist.zip"
